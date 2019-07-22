@@ -1,4 +1,4 @@
-FROM crcrpar/swift-jupyter:cv_test_base
+FROM crcrpar/swift-jupyter:tf0.4
 
 # Install OpenCV
 WORKDIR /opencv
