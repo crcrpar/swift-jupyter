@@ -3,104 +3,26 @@
 This is a Jupyter Kernel for Swift, intended to make it possible to use Jupyter
 with the [Swift for TensorFlow](https://github.com/tensorflow/swift) project.
 
+This branch is based on google/swift-jupyter/tensorflow-0.4.
+
 # Installation Instructions
 
-## Option 1: Using a Swift for TensorFlow toolchain and Virtualenv
+## Using the Docker Container
 
-### Requirements
+This repository also includes three dockerfiles:  
+1. docker/Dockerfile
+2. docker/opencv.Dockerfile
+3. docker/run_jupyter.Dockerfile
 
-Operating system:
-
-* Ubuntu 18.04 (64-bit); OR
-* other operating systems may work, but you will have to build Swift from
-  sources.
-
-Dependencies:
-
-* Python 3 (Ubuntu 18.04 package name: `python3`)
-* Python 3 Virtualenv (Ubuntu 18.04 package name: `python3-venv`)
-
-### Installation
-
-swift-jupyter requires a Swift toolchain with LLDB Python3 support. Currently, the only prebuilt toolchains with LLDB Python3 support are the [Swift for TensorFlow Ubuntu 18.04 Nightly Builds](https://github.com/tensorflow/swift/blob/master/Installation.md#pre-built-packages). Alternatively, you can build a toolchain from sources (see the section below for instructions).
-
-Extract the Swift toolchain somewhere.
-
-Create a virtualenv, install the requirements in it, and register the kernel in
-it:
-
-```bash
-python3 -m venv venv
-. venv/bin/activate
-pip install -r requirements.txt
-python register.py --sys-prefix --swift-toolchain <path to extracted swift toolchain directory>
-```
-
-Finally, run Jupyter:
-
-```bash
-. venv/bin/activate
-jupyter notebook
-```
-
-You should be able to create Swift notebooks. Installation is done!
-
-## Option 2: Using a Swift for TensorFlow toolchain and Conda
-
-### Requirements
-
-Operating system:
-
-* Ubuntu 18.04 (64-bit); OR
-* other operating systems may work, but you will have to build Swift from
-  sources.
-
-### Installation
-
-#### 1. Get toolchain
-
-swift-jupyter requires a Swift toolchain with LLDB Python3 support. Currently, the only prebuilt toolchains with LLDB Python3 support are the [Swift for TensorFlow Ubuntu 18.04 Nightly Builds](https://github.com/tensorflow/swift/blob/master/Installation.md#pre-built-packages). Alternatively, you can build a toolchain from sources (see the section below for instructions).
-
-Extract the Swift toolchain somewhere.
-
-Important note about CUDA/CUDNN: If you are using a CUDA toolchain, then you should install CUDA and CUDNN on your system
-without using Conda, because Conda's CUDNN is too old to work with the Swift toolchain's TensorFlow. (As of 2019-04-08,
-Swift for TensorFlow requires CUDNN 7.5, but Conda only has CUDNN 7.3).
-
-#### 2. Initialize environment
-
-Create a Conda environment and install some packages in it:
-
-```bash
-conda create -n swift-tensorflow python==3.6
-conda activate swift-tensorflow
-conda install jupyter numpy matplotlib
-```
-
-#### 3. Register kernel
-
-Register the Swift kernel with Jupyter:
-
-```bash
-python register.py --sys-prefix --swift-python-use-conda --use-conda-shared-libs \
-  --swift-toolchain <path to extracted swift toolchain directory>
-```
-
-Finally, run Jupyter:
-
-```bash
-jupyter notebook
-```
-
-You should be able to create Swift notebooks. Installation is done!
-
-## Option 3: Using the Docker Container
-
-This repository also includes a dockerfile which can be used to run a Jupyter Notebook instance which includes this Swift kernel. To build the container, the following command may be used:
+As you can see, `"Dockerfile"` defines the Swift for TensorFlow (S4TF) environment. `"opencv.Dockerfile"` installs OpenCV in S4TF environment. `"run_jupyter.Dockerfile"` ease the start up of Jupyter notebook in the docker container.
 
 ```bash
 # from inside the directory of this repository
-docker build -f docker/Dockerfile -t swift-jupyter .
+$ docker build -f docker/Dockerfile -t crcrpar/swift-jupyter:tf0.4 .
+# Install OpenCV to swift-jupyter
+$ docker build -f docker/opencv.Dockerfile -t crcrpar/swift-jupyter:tf0.4-opencv .
+# Add `run_jupyter.sh`
+$ docker build -f docker/opencv.Dockerfile -t crcrpar/swift-jupyter:tf0.4-opencv-jupyter .
 ```
 
 The resulting container comes with the latest Swift for TensorFlow toolchain installed, along with Jupyter and the Swift kernel contained in this repository.
@@ -108,7 +30,7 @@ The resulting container comes with the latest Swift for TensorFlow toolchain ins
 This container can now be run with the following command:
 
 ```bash
-docker run -p 8888:8888 --cap-add SYS_PTRACE -v /my/host/notebooks:/notebooks swift-jupyter
+docker run -p 8888:8888 --cap-add SYS_PTRACE -v /my/host/notebooks:/notebooks crcrpar/swift-jupyter:tf0.4-opencv-jupyter
 ```
 
 The functions of these parameters are:
