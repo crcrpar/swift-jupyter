@@ -10,9 +10,9 @@ This branch is based on google/swift-jupyter/tensorflow-0.4.
 ## Using the Docker Container
 
 This repository also includes three dockerfiles:  
-1. docker/Dockerfile
-2. docker/opencv.Dockerfile
-3. docker/run_jupyter.Dockerfile
+1. docker/Dockerfile -> crcrpar/swift-jupyter:tf0.4
+2. docker/opencv.Dockerfile -> crcrpar/swift-jupyter:tf0.4-opencv
+3. docker/run_jupyter.Dockerfile -> crcrpar/swift-jupyter:tf0.4-opencv-jupyter
 
 As you can see, `"Dockerfile"` defines the Swift for TensorFlow (S4TF) environment. `"opencv.Dockerfile"` installs OpenCV in S4TF environment. `"run_jupyter.Dockerfile"` ease the start up of Jupyter notebook in the docker container.
 
