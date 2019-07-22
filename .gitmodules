@@ -1,0 +1,6 @@
+[submodule "docker/third_party/opencv"]
+	path = docker/third_party/opencv
+	url = https://github.com/opencv/opencv
+[submodule "docker/third_party/opencv_contrib"]
+	path = docker/third_party/opencv_contrib
+	url = https://github.com/opencv/opencv_contrib

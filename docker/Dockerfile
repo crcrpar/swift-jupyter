@@ -10,8 +10,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         ca-certificates \
+        cmake \
         curl \
         git \
+        pkg-config \
         python \
         python-dev \
         python-pip \
@@ -21,7 +23,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip \
         python3-setuptools \
         clang \
+        libavcodec-dev \
+        libavformat-dev \
+        libswscale-dev \
         libcurl4-openssl-dev \
+        libgtk2.0-dev \
         libicu-dev \
         libpython-dev \
         libpython3-dev \
@@ -63,8 +69,17 @@ RUN python3 register.py --user --swift-toolchain /swift-tensorflow-toolchain --s
 RUN echo "/usr/local/cuda-10.0/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-10.0-stubs.conf && \
     ldconfig
 
-# Run jupyter on startup
-EXPOSE 8888
-RUN mkdir /notebooks
-WORKDIR /notebooks
-CMD ["/swift-jupyter/docker/run_jupyter.sh", "--allow-root", "--no-browser", "--ip=0.0.0.0", "--port=8888", "--NotebookApp.custom_display_url=http://127.0.0.1:8888"]
+# Install opencv & opencv_contrib
+# WORKDIR /opencv
+# ADD third_party/opencv .
+# ADD third_party/opencv_contrib .
+# RUN cd opencv && mkdir build && cd build \
+#     && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local .. \
+#     && make -j7 \
+#     && make install
+
+# # Run jupyter on startup
+# EXPOSE 8888
+# RUN mkdir /notebooks
+# WORKDIR /notebooks
+# CMD ["/swift-jupyter/docker/run_jupyter.sh", "--allow-root", "--no-browser", "--ip=0.0.0.0", "--port=8888", "--NotebookApp.custom_display_url=http://127.0.0.1:8888"]
