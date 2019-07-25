@@ -68,18 +68,3 @@ RUN python3 register.py --user --swift-toolchain /swift-tensorflow-toolchain --s
 # Configure cuda
 RUN echo "/usr/local/cuda-10.0/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-10.0-stubs.conf && \
     ldconfig
-
-# Install opencv & opencv_contrib
-# WORKDIR /opencv
-# ADD third_party/opencv .
-# ADD third_party/opencv_contrib .
-# RUN cd opencv && mkdir build && cd build \
-#     && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local .. \
-#     && make -j7 \
-#     && make install
-
-# # Run jupyter on startup
-# EXPOSE 8888
-# RUN mkdir /notebooks
-# WORKDIR /notebooks
-# CMD ["/swift-jupyter/docker/run_jupyter.sh", "--allow-root", "--no-browser", "--ip=0.0.0.0", "--port=8888", "--NotebookApp.custom_display_url=http://127.0.0.1:8888"]
