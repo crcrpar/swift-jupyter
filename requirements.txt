@@ -1,4 +1,4 @@
 jupyter
-pandas
+pandas==0.24
 matplotlib
 numpy

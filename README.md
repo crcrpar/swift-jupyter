@@ -1,28 +1,17 @@
 # Swift-Jupyter
 
-This is a Jupyter Kernel for Swift, intended to make it possible to use Jupyter
-with the [Swift for TensorFlow](https://github.com/tensorflow/swift) project.
-
-This branch is based on google/swift-jupyter/tensorflow-0.4.
+This fork is based on google/swift-jupyter/tensorflow-0.4.
 
 # Installation Instructions
 
 ## Using the Docker Container
 
 This repository also includes three dockerfiles:  
-1. docker/Dockerfile -> crcrpar/swift-jupyter:tf0.4
-2. docker/opencv.Dockerfile -> crcrpar/swift-jupyter:tf0.4-opencv
-3. docker/run_jupyter.Dockerfile -> crcrpar/swift-jupyter:tf0.4-opencv-jupyter
-
-As you can see, `"Dockerfile"` defines the Swift for TensorFlow (S4TF) environment. `"opencv.Dockerfile"` installs OpenCV in S4TF environment. `"run_jupyter.Dockerfile"` ease the start up of Jupyter notebook in the docker container.
+1. docker/Dockerfile -> crcrpar/swift-jupyter:cv*
 
 ```bash
 # from inside the directory of this repository
 $ docker build -f docker/Dockerfile -t crcrpar/swift-jupyter:tf0.4 .
-# Install OpenCV to swift-jupyter
-$ docker build -f docker/opencv.Dockerfile -t crcrpar/swift-jupyter:tf0.4-opencv .
-# Add `run_jupyter.sh`
-$ docker build -f docker/opencv.Dockerfile -t crcrpar/swift-jupyter:tf0.4-opencv-jupyter .
 ```
 
 The resulting container comes with the latest Swift for TensorFlow toolchain installed, along with Jupyter and the Swift kernel contained in this repository.
@@ -41,117 +30,7 @@ The functions of these parameters are:
 
 - `-v <host path>:/notebooks` bind mounts a host directory as a volume where notebooks created in the container will be stored.  If this command is omitted, any notebooks created using the container will not be persisted when the container is stopped.
 
-## (optional) Building toolchain with LLDB Python3 support
-
-Follow the
-[Building Swift for TensorFlow](https://github.com/apple/swift/tree/tensorflow#building-swift-for-tensorflow)
-instructions, with some modifications:
-
-* Also install the Python 3 development headers. (For Ubuntu 18.04,
-  `sudo apt-get install libpython3-dev`). The LLDB build will automatically
-  find these and build with Python 3 support.
-* Instead of running `utils/build-script`, run `utils/build-toolchain-tensorflow`,
-  so that you build a whole toolchain that includes LLDB.
-
-This will create a tar file containing the full toolchain. You can now proceed
-with the installation instructions from the previous section.
-
-# Usage Instructions
-
-## Rich output with Python
-
-You can call Python libraries using [Swift's Python interop] to display rich
-output in your Swift notebooks. (Eventually, we'd like to support Swift
-libraries that produce rich output too!)
-
-Prerequisites:
-
-* You must use a Swift toolchain that has Python interop. As of February 2019,
-  only the Swift for TensorFlow toolchains have Python interop.
-
-After taking care of the prerequisites, run
-`%include "EnableIPythonDisplay.swift"` in your Swift notebook. Now you should
-be able to display rich output! For example:
-
-```swift
-let np = Python.import("numpy")
-let plt = Python.import("matplotlib.pyplot")
-IPythonDisplay.shell.enable_matplotlib("inline")
-```
-
-```swift
-let time = np.arange(0, 10, 0.01)
-let amplitude = np.exp(-0.1 * time)
-let position = amplitude * np.sin(3 * time)
-
-plt.figure(figsize: [15, 10])
-
-plt.plot(time, position)
-plt.plot(time, amplitude)
-plt.plot(time, -amplitude)
-
-plt.xlabel("time (s)")
-plt.ylabel("position (m)")
-plt.title("Oscillations")
-
-plt.show()
-```
-
-![Screenshot of running the above two snippets of code in Jupyter](./screenshots/display_matplotlib.png)
-
-```swift
-let display = Python.import("IPython.display")
-let pd = Python.import("pandas")
-```
-
-```swift
-display.display(pd.DataFrame.from_records([["col 1": 3, "col 2": 5], ["col 1": 8, "col 2": 2]]))
-```
-
-![Screenshot of running the above two snippets of code in Jupyter](./screenshots/display_pandas.png)
-
-[Swift's Python interop]: https://github.com/tensorflow/swift/blob/master/docs/PythonInteroperability.md
-
-## Inline plots
-
-You can display images using Swift too. 
-
-```swift
-%install '.package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.28")' Cryptor
-%install '.package(url: "https://github.com/KarthikRIyer/swiftplot", from: "0.0.1")' SwiftPlot
-%include "EnableJupyterDisplay.swift"
-```
-
-Now you should be able to display images! (Currently only PNG format is supported. You also need to provide the image as a base64 String. Eventually we'd like to support other formats as well.)
-
-For example:
-
-```swift
-import Foundation
-import SwiftPlot
-import AGGRenderer
-￼
-func function(_ x: Float) -> Float {
-    return 1.0 / x
-}
-￼
-var aggRenderer = AGGRenderer()
-var lineGraph = LineGraph()
-lineGraph.addFunction(
-    function,
-    minX: -5.0,
-    maxX: 5.0,
-    numberOfSamples: 400,
-    label: "1/x",
-    color: .orange)
-lineGraph.plotTitle = "FUNCTION"
-lineGraph.drawGraph(renderer: aggRenderer)
-display(base64EncodedPNG: aggRenderer.base64Png())
-```
-
-![Screenshot of running the above snippet of code in Jupyter](./screenshots/display_swiftplot.png)
-
-To learn more about displaying plots using SwiftPlot take a look at the documentation [here](https://github.com/KarthikRIyer/swiftplot).
+# Jupyter Usage
 
 ## %install directives
 

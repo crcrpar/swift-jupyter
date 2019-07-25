@@ -49,6 +49,16 @@ RUN pip3 install -r requirements.txt
 RUN pip2 install -r requirements_py_graphics.txt
 RUN pip3 install -r requirements_py_graphics.txt
 
+# Install OpenCV
+WORKDIR /opencv
+ADD docker/third_party/opencv /opencv/opencv
+ADD docker/third_party/opencv_contrib /opencv/opencv_contrib
+RUN ls -g /opencv
+RUN cd /opencv/opencv && mkdir build && cd build \
+    && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local .. \
+    && make -j7 \
+    && make install
+
 # Copy the kernel into the container
 WORKDIR /swift-jupyter
 COPY . .
